@@ -205,3 +205,7 @@ gettirvars<-function(tabletextcons){# puede que sea bueno que guarde tb los pase
 
 a<-getconsvars(db$tabletext[1])
 
+
+
+#this is another test
+
