@@ -70,9 +70,9 @@ for (i in 1:length(db$playersurl)){
     html_text()#c
 }#defense data $tableteXT
 
-db<-db[-which(is.na(db$tabletext)), ]#remove NAs. actually gk are NA. This must be cleared later
+#db<-db[-which(is.na(db$tabletext)), ]#remove NAs. actually gk are NA. This must be cleared later
 
-a<-getdefvars(db$tabletext[1])#fill the defensive data
+a<-getdefvars(db$tabletext[6])#fill the defensive data. 6 to bypass gk
 
 #now get the values for everyone
 b<-as.data.frame(matrix(ncol = length(a), nrow=length(db$playersurl)))
@@ -93,7 +93,7 @@ for (i in 1:length(db$playersurl)){
     html_text()#c
 }#play-making data $tabletextcons
 
-a<-getconsvars(db$tabletextcons[1])
+a<-getconsvars(db$tabletextcons[which(!is.na(db$tabletextcons))])
 
 b<-as.data.frame(matrix(ncol = length(a), nrow=length(db$playersurl)))
 
@@ -106,4 +106,46 @@ db<-cbind(db, b)#merge play-making data
 db<-db[,-(which(names(db)=="tabletextcons"))]
 
 
-###
+###tiros
+
+
+for (i in 1:length(db$playersurl)){
+  db$tabletexttiros[i]<-html(db$playersurl[i])%>% 
+    html_node("#estadisticas-ataque") %>% #read .id or #class or arg
+    html_text()}#c
+
+a<-gettirvars(db$tabletexttiros[10])
+
+
+b<-as.data.frame(matrix(ncol = length(a), nrow=length(db$playersurl)))
+
+for (i in 1:length(db$name)){
+  b[i,]<-gettirstats(db$tabletexttiros[i])
+}
+
+colnames(b)<-a
+db<-cbind(db, b)#merge play-making data
+db<-db[,-(which(names(db)=="tabletexttiros"))]
+
+
+###########goles
+
+
+for (i in 1:length(db$playersurl)){
+  db$tabletextgoles[i]<-html(db$playersurl[i])%>% 
+    html_node("#estadisticas-goles") %>% #read .id or #class or arg
+    html_text()}#c
+
+a<-getgolvars(db$tabletextgoles[10])
+
+b<-as.data.frame(matrix(ncol = length(a), nrow=length(db$playersurl)))
+
+
+for (i in 1:length(db$name)){
+  b[i,]<-getgolstats(db$tabletextgoles[i])
+}
+
+colnames(b)<-a
+db<-cbind(db, b)
+db<-db[,-(which(names(db)=="tabletextgoles"))]
+
